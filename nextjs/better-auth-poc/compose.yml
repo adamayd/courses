@@ -1,0 +1,32 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17.6
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: myapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis_cache
+  #   restart: unless-stopped
+  #   command: >
+  #     sh -c 'echo "user default off" > /tmp/users.acl && echo "user fullAccessUser on
+  #     >myredispassword ~* &* +@all" >> /tmp/users.acl &&  redis-server --appendonly yes --aclfile
+  #     /tmp/users.acl'
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - redis_data:/data
+
+volumes:
+  postgres_data:
+  # redis_data:
