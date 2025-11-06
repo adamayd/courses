@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
+import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
   database: new Pool({
@@ -21,4 +22,9 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [
+    // make sure this is the last plugin in the array
+    // https://www.better-auth.com/docs/integrations/next#server-action-cookies
+    nextCookies()
+  ]
 });
