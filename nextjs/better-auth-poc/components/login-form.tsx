@@ -1,3 +1,5 @@
+"use client" 
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +17,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { signUp } from "@/server/user"
 
 export function LoginForm({
   className,
@@ -79,7 +82,7 @@ export function LoginForm({
               <Field>
                 <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <a onClick={signUp}>Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
