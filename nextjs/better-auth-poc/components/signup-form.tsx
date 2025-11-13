@@ -20,23 +20,23 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { signIn } from "@/server/user"
+import { signUp } from "@/server/user"
 import * as z from "zod"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
-import Link from "next/link"
 
 const formSchema = z.object({
+  username: z.string().min(3),
   email: z.string(),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters.")
 })
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -46,6 +46,7 @@ export function LoginForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
     },
@@ -60,7 +61,7 @@ const signInWithGoogle = async () => {
  
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const {success, message} = await signIn(values.email, values.password);
+    const {success, message} = await signUp(values.username, values.email, values.password);
 
     if (success) {
       toast.success(message as string);
@@ -74,7 +75,7 @@ const signInWithGoogle = async () => {
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">Welcome</CardTitle>
           <CardDescription>
             Login with your Google account
           </CardDescription>
@@ -96,6 +97,26 @@ const signInWithGoogle = async () => {
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="login-input-username">Username</FieldLabel>
+                    <Input
+                      {...field}
+                      id="login-input-username"
+                      aria-invalid={fieldState.invalid}
+                      type="Username"
+                      placeholder="shadcn"
+                      required
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                  )}
+                />
               <Controller
                 name="email"
                 control={form.control}
@@ -121,15 +142,7 @@ const signInWithGoogle = async () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <div className="flex items-center">
-                      <FieldLabel htmlFor="login-input-password">Password</FieldLabel>
-                      <a
-                        href="#"
-                        className="ml-auto text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
+                    <FieldLabel htmlFor="login-input-password">Password</FieldLabel>
                     <Input 
                       {...field}
                       id="login-input-password"
@@ -145,11 +158,8 @@ const signInWithGoogle = async () => {
                 />
                 <Field>
                   <Button type="submit" form="login-input" disabled={isLoading}>
-                    {isLoading ? <Loader2 className="size-4 animate-spin" /> : "Login"}
+                    {isLoading ? <Loader2 className="size-4 animate-spin" /> : "Sign Up"}
                   </Button>
-                  <FieldDescription className="text-center">
-                    Don&apos;t have an account? <Link href="/signup">Sign up</Link>
-                  </FieldDescription>
                 </Field>
             </FieldGroup>
           </form>
